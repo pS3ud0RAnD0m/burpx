@@ -8,31 +8,33 @@ import burp.api.montoya.proxy.http.ProxyRequestToBeSentAction;
 import static burp.api.montoya.core.HighlightColor.RED;
 import static burp.api.montoya.http.message.ContentType.JSON;
 
-class MyProxyHttpRequestHandler implements ProxyRequestHandler {
+class MyProxyRequestHandler implements ProxyRequestHandler {
     @Override
     public ProxyRequestReceivedAction handleRequestReceived(InterceptedRequest interceptedRequest) {
-        //Drop all post requests
-        if (interceptedRequest.method().equals("POST")) {
-            return ProxyRequestReceivedAction.drop();
-        }
+        // Drop all post requests
+        //if (interceptedRequest.method().equals("POST")) {
+        //    return ProxyRequestReceivedAction.drop();
+        //}
 
-        //Do not intercept any request with foo in the url
+        // Intercept any request with foo in the url
         if (interceptedRequest.url().contains("foo")) {
-            return ProxyRequestReceivedAction.doNotIntercept(interceptedRequest);
+            return ProxyRequestReceivedAction.intercept(interceptedRequest);
         }
 
-        //If the content type is json, highlight the request and follow burp rules for interception
+        // If the content type is json, highlight the request and follow burp rules for interception
         if (interceptedRequest.contentType() == JSON) {
             return ProxyRequestReceivedAction.continueWith(interceptedRequest, interceptedRequest.annotations().withHighlightColor(RED));
         }
 
-        //Intercept all other requests
-        return ProxyRequestReceivedAction.intercept(interceptedRequest);
+        // Intercept all other requests
+        //return ProxyRequestReceivedAction.intercept(interceptedRequest);
+
+        // Do nothing
+        return ProxyRequestReceivedAction.continueWith(interceptedRequest);
     }
 
     @Override
     public ProxyRequestToBeSentAction handleRequestToBeSent(InterceptedRequest interceptedRequest) {
-        //Do nothing with the user modified request, continue as normal.
         return ProxyRequestToBeSentAction.continueWith(interceptedRequest);
     }
 }
