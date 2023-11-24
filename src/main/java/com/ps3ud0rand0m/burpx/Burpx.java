@@ -3,7 +3,7 @@ package com.ps3ud0rand0m.burpx;
 import burp.api.montoya.BurpExtension;
 import burp.api.montoya.MontoyaApi;
 
-public class Main implements BurpExtension
+public class Burpx implements BurpExtension
 {
     @Override
     public void initialize(MontoyaApi api)
