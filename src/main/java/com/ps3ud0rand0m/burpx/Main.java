@@ -10,7 +10,7 @@ public class Main implements BurpExtension
     {
         api.extension().setName("Burpx");
 
-        api.proxy().registerRequestHandler(new MyProxyHttpRequestHandler());
-        api.proxy().registerResponseHandler(new MyProxyHttpResponseHandler());
+        api.proxy().registerRequestHandler(new MyProxyRequestHandler());
+        api.proxy().registerResponseHandler(new MyProxyResponseHandler());
     }
 }
