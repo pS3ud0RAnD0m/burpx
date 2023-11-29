@@ -11,9 +11,9 @@ class MyProxyResponseHandler implements ProxyResponseHandler {
     @Override
     public ProxyResponseReceivedAction handleResponseReceived(InterceptedResponse interceptedResponse) {
         // Highlight all responses that have username in them
-        if (interceptedResponse.bodyToString().contains("username")) {
-            return ProxyResponseReceivedAction.continueWith(interceptedResponse, interceptedResponse.annotations().withHighlightColor(BLUE));
-        }
+        //if (interceptedResponse.bodyToString().contains("username")) {
+        //    return ProxyResponseReceivedAction.continueWith(interceptedResponse, interceptedResponse.annotations().withHighlightColor(BLUE));
+        //}
 
         // Do nothing
         return ProxyResponseReceivedAction.continueWith(interceptedResponse);
