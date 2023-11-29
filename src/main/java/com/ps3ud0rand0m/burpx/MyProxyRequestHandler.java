@@ -17,7 +17,7 @@ class MyProxyRequestHandler implements ProxyRequestHandler {
         //}
 
         // Drop requests with <string> in the url
-        if (interceptedRequest.url().contains("/api/stats/automatic/0/false/session")) {
+        if (interceptedRequest.url().contains("/api/stats/automatic/")) {
             return ProxyRequestReceivedAction.drop();
         }
 
