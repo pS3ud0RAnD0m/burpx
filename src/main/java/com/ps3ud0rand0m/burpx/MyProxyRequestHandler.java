@@ -17,14 +17,19 @@ class MyProxyRequestHandler implements ProxyRequestHandler {
         //}
 
         // Intercept any request with foo in the url
-        if (interceptedRequest.url().contains("foo")) {
-            return ProxyRequestReceivedAction.intercept(interceptedRequest);
+        if (interceptedRequest.url().contains("/api/stats/automatic/0/false/session")) {
+            return ProxyRequestReceivedAction.drop();
         }
 
+        // Intercept any request with foo in the url
+        //if (interceptedRequest.url().contains("foo")) {
+        //    return ProxyRequestReceivedAction.intercept(interceptedRequest);
+        //}
+
         // If the content type is json, highlight the request and follow burp rules for interception
-        if (interceptedRequest.contentType() == JSON) {
-            return ProxyRequestReceivedAction.continueWith(interceptedRequest, interceptedRequest.annotations().withHighlightColor(RED));
-        }
+        //if (interceptedRequest.contentType() == JSON) {
+        //    return ProxyRequestReceivedAction.continueWith(interceptedRequest, interceptedRequest.annotations().withHighlightColor(RED));
+        //}
 
         // Intercept all other requests
         //return ProxyRequestReceivedAction.intercept(interceptedRequest);
