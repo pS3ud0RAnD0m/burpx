@@ -16,12 +16,12 @@ class MyProxyRequestHandler implements ProxyRequestHandler {
         //    return ProxyRequestReceivedAction.drop();
         //}
 
-        // Intercept any request with foo in the url
+        // Drop requests with <string> in the url
         if (interceptedRequest.url().contains("/api/stats/automatic/0/false/session")) {
             return ProxyRequestReceivedAction.drop();
         }
 
-        // Intercept any request with foo in the url
+        // Intercept requests with <string> in the url
         //if (interceptedRequest.url().contains("foo")) {
         //    return ProxyRequestReceivedAction.intercept(interceptedRequest);
         //}
