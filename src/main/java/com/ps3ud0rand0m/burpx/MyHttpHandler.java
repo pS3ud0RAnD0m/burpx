@@ -39,7 +39,7 @@ class MyHttpHandler implements HttpHandler {
     @Override
     public ResponseReceivedAction handleHttpResponseReceived(HttpResponseReceived responseReceived) {
         Annotations annotations = responseReceived.annotations();
-        // Highlight all responses where the request had a Content-Length header.
+        // Highlight all responses with a Content-Length header.
         if (responseHasContentLengthHeader(responseReceived)) {
             annotations = annotations.withHighlightColor(HighlightColor.RED);
         }
