@@ -6,6 +6,7 @@ import burp.api.montoya.core.HighlightColor;
 import burp.api.montoya.http.handler.*;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.logging.Logging;
+import java.util.regex.Pattern;
 
 import static burp.api.montoya.http.handler.RequestToBeSentAction.continueWith;
 import static burp.api.montoya.http.handler.ResponseReceivedAction.continueWith;
@@ -30,7 +31,17 @@ class MyHttpHandler implements HttpHandler {
         //}
 
         // Modify the request by adding url param.
-        HttpRequest modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "parameter"));
+        //HttpRequest modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "parameter"));
+
+// Modify the request if regex matches.
+        HttpRequest modifiedRequest = requestToBeSent;
+        if (requestContainsRegex("foo", requestToBeSent)) {
+            modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "matched"));
+        } else {
+            // This else block executes if the string does not match
+            modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "notmatched"));
+        }
+
 
         // Return the modified request to burp with updated annotations.
         return continueWith(modifiedRequest, annotations);
@@ -45,6 +56,11 @@ class MyHttpHandler implements HttpHandler {
         }
 
         return continueWith(responseReceived, annotations);
+    }
+
+    private static boolean requestContainsRegex(String searchTerm, HttpRequestToBeSent httpRequestToBeSent) {
+        Pattern pattern = Pattern.compile(searchTerm);
+        return httpRequestToBeSent.contains(pattern);
     }
 
     private static boolean isPost(HttpRequestToBeSent httpRequestToBeSent) {
