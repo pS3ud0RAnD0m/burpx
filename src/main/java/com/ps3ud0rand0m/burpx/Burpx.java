@@ -12,6 +12,7 @@ public class Burpx implements BurpExtension
 
         // Http handlers
         api.http().registerHttpHandler(new MyHttpHandler(api));
+        //api.http().registerHttpHandler(new MyHttpHandlerTinker(api));
 
         // Proxy handlers
         //api.proxy().registerRequestHandler(new MyProxyRequestHandler());
