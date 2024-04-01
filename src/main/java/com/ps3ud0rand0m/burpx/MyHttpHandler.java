@@ -25,7 +25,7 @@ class MyHttpHandler implements HttpHandler {
 
     @Override
     public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent requestToBeSent) {
-        // If the request is a post, log the body and add notes.
+        // If post, log the body and add notes
         //Annotations annotations = requestToBeSent.annotations();
         //if (isPost(requestToBeSent)) {
         //    annotations = annotations.withNotes("Request was a post");
@@ -33,35 +33,45 @@ class MyHttpHandler implements HttpHandler {
         //}
         //return continueWith(modifiedRequest, annotations);
 
-        // Modify the request by adding url param.
-        //HttpRequest modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "parameter"));
+        //// Modify the request if requestContains.
+        //HttpRequest modifiedRequest = requestToBeSent;
+        //String searchTerm = "foo";
+        //if (requestContains(searchTerm, requestToBeSent)) {
+        //    modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "matched"));
+        //} else {
+        //    modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "notmatched"));
+        //}
         //return continueWith(modifiedRequest);
 
-        // Modify the request if match.
-        HttpRequest modifiedRequest = requestToBeSent;
-        String searchTerm = "foo";
-        if (regexMatch(searchTerm, requestToBeSent)) {
-            modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "matched"));
-        } else {
-            modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "notmatched"));
-        }
+        // Match and replace string.
+        String matchString = "foo";
+        String replaceString = "fooReplaced";
+        HttpRequest modifiedRequest = matchReplaceString(requestToBeSent, matchString, replaceString);
         return continueWith(modifiedRequest);
     }
 
     @Override
     public ResponseReceivedAction handleHttpResponseReceived(HttpResponseReceived responseReceived) {
-        Annotations annotations = responseReceived.annotations();
+        //Annotations annotations = responseReceived.annotations();
         //// Highlight all responses with a Content-Length header.
         //if (responseHasContentLengthHeader(responseReceived)) {
         //    annotations = annotations.withHighlightColor(HighlightColor.RED);
         //}
-        return continueWith(responseReceived, annotations);
+        //return continueWith(responseReceived, annotations);
+        return continueWith(responseReceived);
     }
 
-    private static boolean regexMatch(String searchTerm, HttpRequest request) {
-        ByteArray requestBytes = request.toByteArray(); // Assuming toByteArray() gets the entire request as ByteArray
-        byte[] bytes = requestBytes.getBytes(); // Correct method to get byte[] from ByteArray
-        String requestString = new String(bytes, StandardCharsets.UTF_8); // Convert byte[] to String
+    private HttpRequest matchReplaceString(HttpRequestToBeSent request, String matchString, String replaceString) {
+        String requestString = new String(request.toByteArray().getBytes(), StandardCharsets.UTF_8);
+        String modifiedRequestString = requestString.replace(matchString, replaceString);
+        //todo: use this as an example of how to repack the requst: https://github.com/portswigger/conditional-match-and-replace
+        //HttpRequest modifiedRequest = createHttpRequestFromContent(modifiedRequestString);
+        HttpRequest modifiedRequest = new String(modifiedRequestString.getBytes()heeeeeelp)
+        return modifiedRequest;
+    }
+
+    private static boolean requestContains(String searchTerm, HttpRequest request) {
+        String requestString = new String(request.toByteArray().getBytes(), StandardCharsets.UTF_8);
         Pattern pattern = Pattern.compile(searchTerm, Pattern.DOTALL);
         return pattern.matcher(requestString).find();
     }
