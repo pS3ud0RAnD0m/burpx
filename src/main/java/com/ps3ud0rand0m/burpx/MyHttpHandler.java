@@ -50,6 +50,7 @@ class MyHttpHandler implements HttpHandler {
         return continueWith(modifiedRequest);
     }
 
+
     @Override
     public ResponseReceivedAction handleHttpResponseReceived(HttpResponseReceived responseReceived) {
         //Annotations annotations = responseReceived.annotations();
