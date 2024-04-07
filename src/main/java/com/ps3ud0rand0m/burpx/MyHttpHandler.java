@@ -7,6 +7,7 @@ import burp.api.montoya.core.HighlightColor;
 import burp.api.montoya.http.handler.*;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.logging.Logging;
+import burp.api.montoya.utilities.ByteUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
@@ -17,31 +18,32 @@ import static burp.api.montoya.http.message.params.HttpParameter.urlParameter;
 
 class MyHttpHandler implements HttpHandler {
     private final Logging logging;
+    private final ByteUtils byteUtils;
 
     public MyHttpHandler(MontoyaApi api) {
         this.logging = api.logging();
+        this.byteUtils = api.utilities().byteUtils();
     }
-
 
     @Override
     public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent requestToBeSent) {
         // If post, log the body and add notes
-        //Annotations annotations = requestToBeSent.annotations();
-        //if (isPost(requestToBeSent)) {
-        //    annotations = annotations.withNotes("Request was a post");
-        //    logging.logToOutput(requestToBeSent.bodyToString());
-        //}
-        //return continueWith(modifiedRequest, annotations);
+        // Annotations annotations = requestToBeSent.annotations();
+        // if (isPost(requestToBeSent)) {
+        //     annotations = annotations.withNotes("Request was a post");
+        //     logging.logToOutput(requestToBeSent.bodyToString());
+        // }
+        // return continueWith(modifiedRequest, annotations);
 
-        //// Modify the request if requestContains.
-        //HttpRequest modifiedRequest = requestToBeSent;
-        //String searchTerm = "foo";
-        //if (requestContains(searchTerm, requestToBeSent)) {
-        //    modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "matched"));
-        //} else {
-        //    modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "notmatched"));
-        //}
-        //return continueWith(modifiedRequest);
+        // Modify the request if requestContains.
+        // HttpRequest modifiedRequest = requestToBeSent;
+        // String searchTerm = "foo";
+        // if (requestContains(searchTerm, requestToBeSent)) {
+        //     modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "matched"));
+        // } else {
+        //     modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("added", "notmatched"));
+        // }
+        // return continueWith(modifiedRequest);
 
         // Match and replace string.
         String matchString = "foo";
@@ -62,11 +64,10 @@ class MyHttpHandler implements HttpHandler {
     }
 
     private HttpRequest matchReplaceString(HttpRequestToBeSent request, String matchString, String replaceString) {
-        String requestString = new String(request.toByteArray().getBytes(), StandardCharsets.UTF_8);
+        byte[] requestBytes = request.toByteArray().getBytes();
+        String requestString = new String(requestBytes, StandardCharsets.UTF_8);
         String modifiedRequestString = requestString.replace(matchString, replaceString);
-        //todo: use this as an example of how to repack the requst: https://github.com/portswigger/conditional-match-and-replace
-        //HttpRequest modifiedRequest = createHttpRequestFromContent(modifiedRequestString);
-        HttpRequest modifiedRequest = new String(modifiedRequestString.getBytes()heeeeeelp)
+        HttpRequest modifiedRequest = HttpRequest.httpRequest(modifiedRequestString); // not working
         return modifiedRequest;
     }
 
