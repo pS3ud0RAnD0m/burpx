@@ -1,4 +1,4 @@
-package com.ps3ud0rand0m.burpx;
+package com.ps3ud0rand0m.burpx.proxy;
 
 import burp.api.montoya.proxy.http.InterceptedRequest;
 import burp.api.montoya.proxy.http.ProxyRequestHandler;
