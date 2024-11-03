@@ -1,49 +1,61 @@
-
 package com.ps3ud0rand0m.burpx.hmac;
 
 import burp.api.montoya.MontoyaApi;
-import burp.api.montoya.http.message.requests.HttpRequest;
-import burp.api.montoya.http.handler.HttpHandler;
-import burp.api.montoya.http.handler.RequestToBeSentAction;
-import burp.api.montoya.http.handler.HttpRequestToBeSent;
-import burp.api.montoya.http.handler.ResponseReceivedAction;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.util.Base64;
-import java.nio.charset.StandardCharsets;
+import burp.api.montoya.core.Annotations;
+import burp.api.montoya.core.HighlightColor;
+import burp.api.montoya.http.handler.*;
+        import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.logging.Logging;
+
+import static burp.api.montoya.http.handler.RequestToBeSentAction.continueWith;
+import static burp.api.montoya.http.handler.ResponseReceivedAction.continueWith;
+import static burp.api.montoya.http.message.params.HttpParameter.urlParameter;
 
 public class Signer implements HttpHandler {
-
-    private static final String HMAC_SHA256 = "HmacSHA256";
-    private static final String KNOWN_GOOD_KEY = "known-good-key";  // Replace with actual key
+    private final Logging logging;
 
     public Signer(MontoyaApi api) {
-        api.logging().logToOutput("Signer initialized");
+        this.logging = api.logging();
+    }
+
+
+    @Override
+    public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent requestToBeSent) {
+        Annotations annotations = requestToBeSent.annotations();
+        HttpRequest modifiedRequest = requestToBeSent;
+
+        if (isInScope(requestToBeSent)) {
+            // Log stuff
+            annotations = annotations.withNotes("Burpx-Status: Request was in scope.");
+            logging.logToOutput(requestToBeSent.bodyToString());
+
+            // Add a URL param
+            //modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("Burpx-Url-Param", "UrlParam"));
+
+            // Add headers
+            modifiedRequest = modifiedRequest.withAddedHeader("Burpx-Key-Was", "KeyValue");
+        }
+
+        // Return the modified request to burp with updated annotations.
+        return continueWith(modifiedRequest, annotations);
     }
 
     @Override
-    public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent request) {
-        String signature = generateHMACSignature(request.toString(), KNOWN_GOOD_KEY);
-        HttpRequest modifiedRequest = request.withAddedHeader("X-Burpx-Signed", KNOWN_GOOD_KEY)
-                .withAddedHeader("X-Burpx-HMACSignature", "HMACAuth: " + signature);
-        return RequestToBeSentAction.continueWith(modifiedRequest);
+    public ResponseReceivedAction handleHttpResponseReceived(HttpResponseReceived responseReceived) {
+        Annotations annotations = responseReceived.annotations();
+
+        return continueWith(responseReceived, annotations);
     }
 
-    //@Override
-    //public ResponseReceivedAction handleHttpResponseReceived(HttpResponseReceived response) {
-    //    // No modification needed for now, just proceed with the response
-    //    return ResponseReceivedAction.continueWith(response);
-    //}
+    private static boolean isInScope(HttpRequestToBeSent httpRequestToBeSent) {
+        return httpRequestToBeSent.isInScope();
+    }
 
-    private String generateHMACSignature(String data, String key) {
-        try {
-            Mac mac = Mac.getInstance(HMAC_SHA256);
-            SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), HMAC_SHA256);
-            mac.init(secretKeySpec);
-            byte[] hmacBytes = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
-            return Base64.getEncoder().encodeToString(hmacBytes);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to generate HMAC signature", e);
-        }
+    private static boolean isPost(HttpRequestToBeSent httpRequestToBeSent) {
+        return httpRequestToBeSent.method().equalsIgnoreCase("POST");
+    }
+
+    private static boolean responseHasContentLengthHeader(HttpResponseReceived httpResponseReceived) {
+        return httpResponseReceived.initiatingRequest().headers().stream().anyMatch(header -> header.name().equalsIgnoreCase("Content-Length"));
     }
 }
