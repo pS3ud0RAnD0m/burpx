@@ -1,9 +1,6 @@
-package com.ps3ud0rand0m.burpx;
+package com.ps3ud0rand0m.burpx.http;
 
 import burp.api.montoya.MontoyaApi;
-import burp.api.montoya.core.Annotations;
-import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.core.HighlightColor;
 import burp.api.montoya.http.handler.*;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.logging.Logging;
@@ -14,7 +11,6 @@ import java.util.regex.Pattern;
 
 import static burp.api.montoya.http.handler.RequestToBeSentAction.continueWith;
 import static burp.api.montoya.http.handler.ResponseReceivedAction.continueWith;
-import static burp.api.montoya.http.message.params.HttpParameter.urlParameter;
 
 class MyHttpHandler implements HttpHandler {
     private final Logging logging;

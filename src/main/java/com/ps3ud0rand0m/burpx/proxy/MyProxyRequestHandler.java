@@ -1,4 +1,4 @@
-package com.ps3ud0rand0m.burpx;
+package com.ps3ud0rand0m.burpx.proxy;
 
 import burp.api.montoya.logging.Logging;
 import burp.api.montoya.proxy.http.InterceptedRequest;
@@ -9,9 +9,6 @@ import burp.api.montoya.MontoyaApi;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static burp.api.montoya.core.HighlightColor.RED;
-import static burp.api.montoya.http.message.ContentType.JSON;
 
 class MyProxyRequestHandler implements ProxyRequestHandler {
 
