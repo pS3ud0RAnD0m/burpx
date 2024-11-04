@@ -23,7 +23,7 @@ public class Signer implements HttpHandler {
 
     private final Logging logging;
     private static final String HMAC_SHA256 = "HmacSHA256";
-    private static final String HMAC_KEY = "T1JJTU1NQVlNRVVZTUFZTU0wMU1PTmxZTE1nTk1RWUxNSmNOTzFWTU5SRU5NWklNTDFZWk5aY05PY1FZTmdjTkxJUVpaUlVMTlljTVoxaWh6V0QwdFdHbTFqV3gyemp5MWpEejVUVG15U1drNW1tazBtRGtoQ0drNXpUaXRUR3d4elR0aFdEaWt5aTB5alR6dFRUMTFXencxelRt";
+    private static final String HMAC_KEY = "sup3r$3cret";
 
     public Signer(MontoyaApi api) {
         this.logging = api.logging();
@@ -44,12 +44,11 @@ public class Signer implements HttpHandler {
             //modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("Burpx-Url-Param", "UrlParam"));
 
             // Add key header
-            modifiedRequest = modifiedRequest.withAddedHeader("Burpx-Key-Was", HMAC_KEY);
+            modifiedRequest = modifiedRequest.withAddedHeader("X-Burpx-Key-Was", HMAC_KEY);
 
             // Add timestamp header
-            //String timeStamp = makeTimeStamp();
-            String timeStamp = "2024-11-03T22:20:38Z";
-            modifiedRequest = modifiedRequest.withAddedHeader("X-QLYS-Timestamp", timeStamp);
+            String timeStamp = makeTimeStamp();
+            modifiedRequest = modifiedRequest.withAddedHeader("X-Acme-Authorization-Timestamp", timeStamp);
 
             // Add HMAC header
             String requestData = modifiedRequest.toString();
