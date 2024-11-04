@@ -4,15 +4,26 @@ import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.Annotations;
 import burp.api.montoya.core.HighlightColor;
 import burp.api.montoya.http.handler.*;
-        import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.logging.Logging;
+
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.nio.charset.StandardCharsets;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import static burp.api.montoya.http.handler.RequestToBeSentAction.continueWith;
 import static burp.api.montoya.http.handler.ResponseReceivedAction.continueWith;
 import static burp.api.montoya.http.message.params.HttpParameter.urlParameter;
 
 public class Signer implements HttpHandler {
+
     private final Logging logging;
+    private static final String HMAC_SHA256 = "HmacSHA256";
+    private static final String HMAC_KEY = "T1JJTU1NQVlNRVVZTUFZTU0wMU1PTmxZTE1nTk1RWUxNSmNOTzFWTU5SRU5NWklNTDFZWk5aY05PY1FZTmdjTkxJUVpaUlVMTlljTVoxaWh6V0QwdFdHbTFqV3gyemp5MWpEejVUVG15U1drNW1tazBtRGtoQ0drNXpUaXRUR3d4elR0aFdEaWt5aTB5alR6dFRUMTFXencxelRt";
 
     public Signer(MontoyaApi api) {
         this.logging = api.logging();
@@ -27,13 +38,25 @@ public class Signer implements HttpHandler {
         if (isInScope(requestToBeSent)) {
             // Log stuff
             annotations = annotations.withNotes("Burpx-Status: Request was in scope.");
-            logging.logToOutput(requestToBeSent.bodyToString());
+            //logging.logToOutput(requestToBeSent.bodyToString());
 
             // Add a URL param
             //modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("Burpx-Url-Param", "UrlParam"));
 
-            // Add headers
-            modifiedRequest = modifiedRequest.withAddedHeader("Burpx-Key-Was", "KeyValue");
+            // Add key header
+            modifiedRequest = modifiedRequest.withAddedHeader("Burpx-Key-Was", HMAC_KEY);
+
+            // Add timestamp header
+            //String timeStamp = makeTimeStamp();
+            String timeStamp = "2024-11-03T22:20:38Z";
+            modifiedRequest = modifiedRequest.withAddedHeader("X-QLYS-Timestamp", timeStamp);
+
+            // Add HMAC header
+            String requestData = modifiedRequest.toString();
+            logging.logToOutput(requestData);
+            String hmacSignature = generateHMACSignature(requestData, HMAC_KEY);
+            modifiedRequest = modifiedRequest.withAddedHeader("X-Acme-Authorization", "HmacV1Auth D2FD6DD0-D72B-4073-ACB3-4203A15AC035:" + hmacSignature);
+
         }
 
         // Return the modified request to burp with updated annotations.
@@ -57,5 +80,23 @@ public class Signer implements HttpHandler {
 
     private static boolean responseHasContentLengthHeader(HttpResponseReceived httpResponseReceived) {
         return httpResponseReceived.initiatingRequest().headers().stream().anyMatch(header -> header.name().equalsIgnoreCase("Content-Length"));
+    }
+
+    private static String makeTimeStamp() {
+        return DateTimeFormatter.ISO_INSTANT
+                .withZone(ZoneOffset.UTC)
+                .format(Instant.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS)); // Intentionally, only to the second
+    }
+
+    private static String generateHMACSignature(String requestData, String key) {
+         try {
+             Mac mac = Mac.getInstance(HMAC_SHA256);
+             SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), HMAC_SHA256);
+             mac.init(secretKeySpec);
+             byte[] hmacBytes = mac.doFinal(requestData.getBytes(StandardCharsets.UTF_8));
+             return Base64.getEncoder().encodeToString(hmacBytes);
+         } catch (Exception e) {
+             throw new RuntimeException("Failed to generate HMAC signature", e);
+         }
     }
 }
