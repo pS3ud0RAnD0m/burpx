@@ -54,7 +54,7 @@ public class Signer implements HttpHandler {
             String requestData = modifiedRequest.toString();
             logging.logToOutput(requestData);
             String hmacSignature = generateHMACSignature(requestData, HMAC_KEY);
-            modifiedRequest = modifiedRequest.withAddedHeader("X-Acme-Authorization", "HmacV1Auth D2FD6DD0-D72B-4073-ACB3-4203A15AC035:" + hmacSignature);
+            modifiedRequest = modifiedRequest.withAddedHeader("X-Acme-Authorization", "HmacV1Auth 00000-0000-0000-0000-000000000000:" + hmacSignature);
 
         }
 
