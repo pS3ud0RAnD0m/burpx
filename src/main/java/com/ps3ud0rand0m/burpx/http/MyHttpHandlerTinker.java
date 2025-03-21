@@ -14,7 +14,7 @@ import static burp.api.montoya.http.handler.RequestToBeSentAction.continueWith;
 import static burp.api.montoya.http.handler.ResponseReceivedAction.continueWith;
 import static burp.api.montoya.http.message.params.HttpParameter.urlParameter;
 
-class MyHttpHandlerTinker implements HttpHandler {
+public class MyHttpHandlerTinker implements HttpHandler {
     private final Logging logging;
 
     public MyHttpHandlerTinker(MontoyaApi api) {
