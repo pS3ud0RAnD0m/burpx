@@ -47,14 +47,14 @@ public class Signer implements HttpHandler {
             modifiedRequest = modifiedRequest.withAddedHeader("X-Burpx-Key-Was", HMAC_KEY);
 
             // Add timestamp header
-            String timeStamp = makeTimeStamp();
+            String timeStamp = generateTimeStamp();
             modifiedRequest = modifiedRequest.withAddedHeader("X-Acme-Authorization-Timestamp", timeStamp);
 
             // Add HMAC header
             String requestData = modifiedRequest.toString();
             logging.logToOutput(requestData);
             String hmacSignature = generateHMACSignature(requestData, HMAC_KEY);
-            modifiedRequest = modifiedRequest.withAddedHeader("X-Acme-Authorization", "HmacV1Auth D2FD6DD0-D72B-4073-ACB3-4203A15AC035:" + hmacSignature);
+            modifiedRequest = modifiedRequest.withAddedHeader("X-Acme-Authorization", "HmacV1Auth 00000-0000-0000-0000-000000000000:" + hmacSignature);
 
         }
 
@@ -81,7 +81,7 @@ public class Signer implements HttpHandler {
         return httpResponseReceived.initiatingRequest().headers().stream().anyMatch(header -> header.name().equalsIgnoreCase("Content-Length"));
     }
 
-    private static String makeTimeStamp() {
+    private static String generateTimeStamp() {
         return DateTimeFormatter.ISO_INSTANT
                 .withZone(ZoneOffset.UTC)
                 .format(Instant.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS)); // Intentionally, only to the second
