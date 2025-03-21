@@ -10,7 +10,7 @@ import burp.api.montoya.MontoyaApi;
 import java.util.Arrays;
 import java.util.List;
 
-class MyProxyRequestHandler implements ProxyRequestHandler {
+public class MyProxyRequestHandler implements ProxyRequestHandler {
 
     private final Logging logging;
 
@@ -55,12 +55,15 @@ class MyProxyRequestHandler implements ProxyRequestHandler {
         // Hard-coded list of strings to drop
         List<String> dropUrls = Arrays.asList(
                 "mydroptest",
-                "analytics.com/",
-                "doubleclick.net/",
-                "drift.com/",
-                "fullstory.com/",
-                "analytics.google.com/",
-                "telemetry.elastic.co/"
+                "analytics.com",
+                "doubleclick.net",
+                "drift.com",
+                "driftt.com",
+                "fullstory.com",
+                "analytics.google.com",
+                "telemetry.elastic.co",
+                "rs.fullstory.com",
+                "launchdarkly.com"
         );
 
         for (String dropUrl : dropUrls) {

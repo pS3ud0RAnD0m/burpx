@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import static burp.api.montoya.http.handler.RequestToBeSentAction.continueWith;
 import static burp.api.montoya.http.handler.ResponseReceivedAction.continueWith;
 
-class MyHttpHandler implements HttpHandler {
+public class MyHttpHandler implements HttpHandler {
     private final Logging logging;
     private final ByteUtils byteUtils;
 
