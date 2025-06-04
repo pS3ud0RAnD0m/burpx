@@ -63,7 +63,7 @@ public class MyProxyRequestHandler implements ProxyRequestHandler {
                 "analytics.google.com",
                 "telemetry.elastic.co",
                 "rs.fullstory.com",
-                "launchdarkly.com"
+                "app.pendo.io"
         );
 
         for (String dropUrl : dropUrls) {
